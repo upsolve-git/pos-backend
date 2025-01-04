@@ -13,7 +13,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 
-const allowedOrigins = ['https://www.canadiangelnails.com', 'http://localhost:3000'];
+const allowedOrigins = ['https://main.d29iicb8es15um.amplifyapp.com', 'http://localhost:3000'];
 
 const corsOptions = {
   origin: function (origin, callback) {
