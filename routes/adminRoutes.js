@@ -6,6 +6,10 @@ const router = express.Router();
 
 // Admin-specific routes
 router.post('/add-service', authenticate, authorize('admin'), AdminController.addService);
-router.post('/set-slot', authenticate, authorize('admin'), AdminController.setSlot);
+router.post('/set-staff', authenticate, authorize('admin'), AdminController.addStaff);
+router.post('/get-customers', authenticate, authorize('admin'), AdminController.getCustomers);
+router.get('/view-appointments', authenticate, authorize('admin'), AdminController.getAppointmentsForDay);
+router.post('/update-appointment', authenticate, authorize('admin'), AdminController.updateAppointment);
+router.post('/get-services', authenticate, authorize('admin'), AdminController.getServices);
 
 module.exports = router;

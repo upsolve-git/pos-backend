@@ -5,8 +5,9 @@ const { authenticate, authorize } = require('../middleware/authMiddleware');
 const router = express.Router();
 
 // Customer-specific routes
-router.get('/view-services', CustomerController.viewServices); // No auth required for service listing
-router.get('/view-slots/:serviceId', authenticate, authorize('customer'), CustomerController.viewAvailableSlots);
-router.post('/book-appointment', authenticate, authorize('customer'), CustomerController.bookAppointment);
+router.get('/services', CustomerController.viewServices); // No auth required for service listing
+router.post('/book-appointment', CustomerController.bookAppointment);
+router.post('/cancel-appointment', CustomerController.cancelAppointment);
+router.get('/appointments/customer/:customer_id', CustomerController.getAppointmentsByCustomerId);
 
 module.exports = router;

@@ -52,10 +52,21 @@ const User = {
         return rows[0];
     },
 
+    async getAll() {
+        const query = `SELECT * FROM users`;
+        const [rows] = await pool.execute(query);
+        return rows;
+    },
+
     // Switch the database dynamically
     async useDatabase() {
         const query = `USE store_management`;
         await pool.query(query);
+    },
+    async updateStatus(appointment_id, status) {
+        const query = `UPDATE Appointments SET status = ? WHERE appointment_id = ?`;
+        const [result] = await pool.execute(query, [status, appointment_id]);
+        return result.affectedRows > 0;
     },
 };
 

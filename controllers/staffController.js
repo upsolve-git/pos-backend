@@ -11,13 +11,37 @@ const StaffController = {
         }
     },
 
-    async confirmAppointment(req, res) {
+    async completeAppointment(req, res) {
         try {
-            const { appointmentId } = req.body;
-            await Appointment.updateStatus(appointmentId, 'confirmed');
-            res.json({ message: 'Appointment confirmed successfully' });
+            const { appointment_id } = req.params; // Extract appointment_id from route params
+            const { staff_id } = req.body; // Extract staff_id from the request body
+
+            if (!appointment_id || !staff_id) {
+                return res.status(400).json({ message: 'Appointment ID and Staff ID are required' });
+            }
+
+            // Update the appointment status to 'completed'
+            const statusUpdated = await Appointment.updateStatus(appointment_id, 'completed');
+
+            if (!statusUpdated) {
+                return res.status(404).json({ message: 'Appointment not found or status not updated' });
+            }
+
+            // Update staff availability to true
+            const availabilityUpdated = await Staff.updateAvailability(staff_id, true);
+
+            if (availabilityUpdated) {
+                return res.status(200).json({
+                    message: 'Appointment status updated to completed and staff marked as available',
+                });
+            } else {
+                return res.status(500).json({
+                    message: 'Appointment completed but failed to update staff availability',
+                });
+            }
         } catch (error) {
-            res.status(500).json({ error: 'Error confirming appointment', details: error.message });
+            console.error(error);
+            res.status(500).json({ message: 'Internal Server Error', details: error.message });
         }
     },
 };
