@@ -71,14 +71,13 @@ const AdminController = {
 
     async getAppointmentsForDay(req, res) {
         try {
-            const { service_id } = req.query;
 
             // Use the current date if none is provided
             const today = new Date();
             const formattedDate = today.toISOString().split('T')[0]; // YYYY-MM-DD format
 
             // Call the Appointment model method
-            const appointments = await Appointment.getAppointmentsForDay(service_id, formattedDate);
+            const appointments = await Appointment.getAppointmentsForDay(formattedDate);
 
             res.status(200).json({
                 message: 'Appointments fetched successfully',
@@ -133,6 +132,7 @@ const AdminController = {
             `;
             const [result] = await Appointment.executeQuery(query, values);
 
+
             if (result.affectedRows > 0) {
                 // If staff_id is updated, set availability to false in Staff table
                 if (staff_id) {
@@ -151,21 +151,34 @@ const AdminController = {
     async getServices (req, res) {
         try {
             const services = await Service.getAll();
-            res.json(services);
+            return res.status(200).json(services);
         } catch (error) {
-            res.status(500).json({ error: 'Error fetching services', details: error.message });
+           return  res.status(500).json({ error: 'Error fetching services', details: error.message });
         }
     },
  
-    async getCustomers (req, res) {
+    async  getCustomers (req, res) {
         try {
             const users = await User.getAll();
-            res.json(users);
+            return res.status(200).json(users);
         } catch (error) {
-            res.status(500).json({ error: 'Error fetching services', details: error.message });
+            return res.status(500).json({ error: 'Error fetching services', details: error.message });
         }
     },
 
+    async getStaff (req,res){
+        try {
+            const {service_id} = req.params;
+            if (!service_id){
+                const staff = await Staff.getAll();
+                return res.status(200).json(staff);
+            }
+            const staffbyService = await Staff.getStaffbyServiceAvailability(service_id, true)
+            return res.status(200).json(staffbyService);
+        } catch(error) {
+            res.status(500).json({ error: 'Error fetching staff', details: error.message });
+        }
+    }, 
  
 };
 

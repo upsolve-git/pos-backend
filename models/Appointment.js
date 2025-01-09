@@ -36,15 +36,15 @@ const Appointment = {
     
 
     // Method to get appointments for a specific day and service
-    async getAppointmentsForDay(service_id, date) {
+    async getAppointmentsForDay(date) {
         const query = `
             SELECT a.*, u.first_name AS customer_name, srv.name AS service_name
             FROM Appointments a
             JOIN users u ON a.customer_id = u.id
             JOIN Services srv ON a.service_id = srv.service_id
-            WHERE a.service_id = ? AND a.date = ?
+            WHERE a.date = ?
         `;
-        const [rows] = await pool.execute(query, [service_id, date]);
+        const [rows] = await pool.execute(query, [date]);
         return rows;
     },
 
