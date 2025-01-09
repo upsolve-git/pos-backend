@@ -12,16 +12,9 @@ const cookieParser = require("cookie-parser");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-<<<<<<< HEAD
-const allowedOrigins = [
-  "https://www.canadiangelnails.com",
-  "http://localhost:3000",
-  "http://192.168.29.11:8081",
-];
-=======
 
-const allowedOrigins = ['https://main.d29iicb8es15um.amplifyapp.com', 'http://localhost:3000'];
->>>>>>> 464a85057f793ad3973c187199ebcaf739191b7b
+
+const allowedOrigins = ['https://main.d29iicb8es15um.amplifyapp.com', 'http://localhost:3000',  "http://192.168.29.11:8081"];
 
 const corsOptions = {
   origin: function (origin, callback) {

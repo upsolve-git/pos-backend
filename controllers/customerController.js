@@ -1,5 +1,6 @@
 const Service = require('../models/Service');
 const Appointment = require('../models/Appointment');
+const Staff = require('../models/Staff');
 
 const CustomerController = {
     async viewServices(req, res) {
@@ -15,7 +16,7 @@ const CustomerController = {
     async bookAppointment(req, res) {
         try {
             console.log(req.body);
-            const { customer_id, service_id, date, startTime } = req.body;
+            const { customer_id, service_id, date, startTime, staff_id} = req.body;
 
             // Fetch service details
             const service = await Service.getServiceDetails(service_id);
@@ -38,7 +39,8 @@ const CustomerController = {
                 date,
                 startTime,
                 status,
-                paymentStatus: 'pending'
+                paymentStatus: 'pending',
+                staff_id
             });
 
             res.status(201).json({
@@ -96,7 +98,35 @@ const CustomerController = {
             console.error('Error fetching appointments:', error);
             res.status(500).json({ message: 'Internal Server Error' });
         }
-    }    
+    },
+
+    async getAvailableStaff(req, res) {
+        // console.log(req)
+        const { serviceId } = req.query;
+        try {
+          const staffList = await Staff.findAllByServiceId(serviceId);
+      
+          res.status(200).json(staffList);
+        } catch (error) {
+          console.error("Error fetching staff:", error);
+          res.status(500).json({ message: "Failed to fetch staff." });
+        }
+    },
+
+    async getFutureAppointments(req, res) {
+        const { staffId } = req.query;
+        console.log(staffId)
+        try {
+          const futureAppointments = await Appointment.findFutureAppointmentsByStaffId(staffId);
+      
+          res.status(200).json(futureAppointments);
+        } catch (error) {
+          console.error("Error fetching future appointments:", error);
+          res.status(500).json({ message: "Failed to fetch future appointments." });
+        }
+    }
+
+
 
 };
 

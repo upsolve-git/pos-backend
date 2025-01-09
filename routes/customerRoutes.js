@@ -9,5 +9,6 @@ router.get('/services', CustomerController.viewServices); // No auth required fo
 router.post('/book-appointment', CustomerController.bookAppointment);
 router.post('/cancel-appointment', CustomerController.cancelAppointment);
 router.get('/appointments/customer/:customer_id', CustomerController.getAppointmentsByCustomerId);
-
+router.get('/available-staff', CustomerController.getAvailableStaff);
+router.get('/booked-appointments', CustomerController.getFutureAppointments);
 module.exports = router;

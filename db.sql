@@ -1,6 +1,6 @@
 -- CREATE DATABASE store_management;
 
--- USE store_management;
+USE store_management;
 
 -- -- Step 1: Delete entries from the 'users' table that are referenced in the 'staff' table
 -- -- DELETE FROM Appointments
@@ -54,19 +54,19 @@
 --     limitPerDay INT NOT NULL
 -- );
 
-CREATE TABLE Appointments (
-    appointment_id INT AUTO_INCREMENT PRIMARY KEY,
-    customer_id INT NOT NULL,
-    staff_id INT, -- Nullable since it’s only required if completed
-    service_id INT NOT NULL,
-    date DATE NOT NULL,
-    startTime TIME NOT NULL,
-    status ENUM('pending', 'confirmed', 'cancelled', 'completed') NOT NULL DEFAULT 'pending',
-    paymentStatus ENUM('pending', 'paid') NOT NULL DEFAULT 'pending',
-    FOREIGN KEY (customer_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (staff_id) REFERENCES Staff(staff_id) ON DELETE SET NULL,
-    FOREIGN KEY (service_id) REFERENCES Services(service_id) ON DELETE CASCADE
-);
+-- CREATE TABLE Appointments (
+--     appointment_id INT AUTO_INCREMENT PRIMARY KEY,
+--     customer_id INT NOT NULL,
+--     staff_id INT, -- Nullable since it’s only required if completed
+--     service_id INT NOT NULL,
+--     date DATE NOT NULL,
+--     startTime TIME NOT NULL,
+--     status ENUM('pending', 'confirmed', 'cancelled', 'completed') NOT NULL DEFAULT 'pending',
+--     paymentStatus ENUM('pending', 'paid') NOT NULL DEFAULT 'pending',
+--     FOREIGN KEY (customer_id) REFERENCES users(id) ON DELETE CASCADE,
+--     FOREIGN KEY (staff_id) REFERENCES Staff(staff_id) ON DELETE SET NULL,
+--     FOREIGN KEY (service_id) REFERENCES Services(service_id) ON DELETE CASCADE
+-- );
 
 -- CREATE TABLE slots (
 --     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -113,6 +113,63 @@ CREATE TABLE Appointments (
 
 
 
-SELECT staff_id, user_id, available 
-FROM Staff 
-WHERE service_id = ? AND available = TRUE;
+-- SELECT staff_id, user_id, available 
+-- FROM Staff 
+-- WHERE service_id = ? AND available = TRUE;
+
+INSERT INTO users (role, first_name, last_name, phone_number, email, password, dob, status, is_subscribed) VALUES
+('staff', 'Alice', 'Smith', '1234566890', 'alice.smith@example.com', 'password123', '1985-06-15', 'active', FALSE),
+('staff', 'Bob', 'Johnson', '1234567891', 'bob.johnson@example.com', 'password123', '1990-07-20', 'active', TRUE),
+('staff', 'Charlie', 'Brown', '1234567892', 'charlie.brown@example.com', 'password123', '1988-03-25', 'active', FALSE),
+('staff', 'Diana', 'Miller', '1234567893', 'diana.miller@example.com', 'password123', '1992-08-10', 'active', TRUE),
+('staff', 'Eve', 'Davis', '1234567894', 'eve.davis@example.com', 'password123', '1987-09-12', 'active', TRUE),
+
+('staff', 'Frank', 'Wilson', '1234567895', 'frank.wilson@example.com', 'password123', '1989-01-14', 'active', FALSE),
+('staff', 'Grace', 'Taylor', '1234567896', 'grace.taylor@example.com', 'password123', '1993-05-18', 'active', TRUE),
+('staff', 'Hank', 'Anderson', '1234567897', 'hank.anderson@example.com', 'password123', '1986-11-22', 'active', FALSE),
+('staff', 'Ivy', 'Thomas', '1234567898', 'ivy.thomas@example.com', 'password123', '1991-04-30', 'active', TRUE),
+('staff', 'Jack', 'White', '1234567899', 'jack.white@example.com', 'password123', '1994-02-06', 'active', TRUE),
+
+('staff', 'Kate', 'Martin', '1234567800', 'kate.martin@example.com', 'password123', '1983-03-11', 'active', FALSE),
+('staff', 'Leo', 'Garcia', '1234567801', 'leo.garcia@example.com', 'password123', '1988-06-24', 'active', TRUE),
+('staff', 'Mia', 'Martinez', '1234567802', 'mia.martinez@example.com', 'password123', '1995-12-19', 'active', TRUE),
+('staff', 'Nina', 'Robinson', '1234567803', 'nina.robinson@example.com', 'password123', '1990-10-05', 'active', FALSE),
+('staff', 'Oscar', 'Clark', '1234567804', 'oscar.clark@example.com', 'password123', '1992-08-08', 'active', TRUE),
+
+('staff', 'Paul', 'Rodriguez', '1234567805', 'paul.rodriguez@example.com', 'password123', '1987-09-15', 'active', TRUE),
+('staff', 'Quinn', 'Lewis', '1234567806', 'quinn.lewis@example.com', 'password123', '1985-11-29', 'active', FALSE),
+('staff', 'Ruby', 'Lee', '1234567807', 'ruby.lee@example.com', 'password123', '1993-07-03', 'active', TRUE),
+('staff', 'Steve', 'Walker', '1234567808', 'steve.walker@example.com', 'password123', '1986-04-16', 'active', TRUE),
+('staff', 'Tina', 'Hall', '1234567809', 'tina.hall@example.com', 'password123', '1991-01-09', 'active', TRUE);
+
+
+INSERT INTO Staff (user_id, hourlyWage, service_id, available) VALUES
+(1, 15.00, 1, TRUE),
+(2, 16.50, 1, TRUE),
+(3, 14.75, 1, TRUE),
+(4, 17.00, 1, TRUE),
+(5, 15.25, 1, FALSE),
+
+(6, 18.00, 2, TRUE),
+(7, 19.00, 2, TRUE),
+(8, 17.50, 2, TRUE),
+(9, 16.00, 2, TRUE),
+(10, 15.75, 2, FALSE),
+
+(11, 20.00, 3, TRUE),
+(12, 21.00, 3, TRUE),
+(13, 19.50, 3, TRUE),
+(14, 18.75, 3, FALSE),
+(15, 22.00, 3, TRUE),
+
+(16, 23.00, 4, TRUE),
+(17, 24.50, 4, FALSE),
+(18, 22.75, 4, TRUE),
+(19, 21.25, 4, TRUE),
+(20, 20.50, 4, TRUE),
+
+(21, 25.00, 5, TRUE),
+(22, 26.00, 5, FALSE),
+(23, 24.75, 5, TRUE),
+(24, 23.50, 5, TRUE),
+(25, 22.25, 5, TRUE);

@@ -31,7 +31,7 @@ const Staff = {
               s.*, 
               u.* 
           FROM 
-              staff s 
+              Staff s 
           JOIN 
               users u ON s.user_id = u.id;
         `;
@@ -39,6 +39,26 @@ const Staff = {
     const [rows] = await pool.execute(query);
     return rows;
   },
+
+  async findAllByServiceId(serviceId) {
+    const query = `
+          SELECT 
+              s.staff_id , 
+              u.first_name, 
+              u.last_name 
+          FROM 
+              Staff s 
+          JOIN 
+              users u ON s.user_id = u.id
+          WHERE 
+              s.service_id = ? AND s.available = true;
+        `;
+  
+    const [rows] = await pool.execute(query, [serviceId]);
+    return rows;
+  }
+  
+  
 };
 
 module.exports = Staff;

@@ -1,4 +1,5 @@
 const Appointment = require('../models/Appointment');
+const Staff = require('../models/Staff');
 
 const StaffController = {
     async viewAppointments(req, res) {
@@ -44,6 +45,7 @@ const StaffController = {
             res.status(500).json({ message: 'Internal Server Error', details: error.message });
         }
     },
+
 };
 
 module.exports = StaffController;

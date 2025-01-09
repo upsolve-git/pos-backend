@@ -2,12 +2,13 @@ const pool = require('../config/database');
 
 const Appointment = {
     // Method to insert a new appointment
-    async insert({ customer_id, service_id, date, startTime, status, paymentStatus }) {
+    async insert({ customer_id, service_id, date, startTime, status, paymentStatus, staff_id }) {
+        console.log(staff_id)
         const query = `
-            INSERT INTO Appointments (customer_id, service_id, date, startTime, status, paymentStatus)
-            VALUES (?, ?, ?, ?, ?, ?)
+            INSERT INTO Appointments (customer_id, service_id, date, startTime, status, paymentStatus, staff_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
         `;
-        const [result] = await pool.execute(query, [customer_id, service_id, date, startTime, status, paymentStatus]);
+        const [result] = await pool.execute(query, [customer_id, service_id, date, startTime, status, paymentStatus, staff_id]);
         return result.insertId;
     },
 
@@ -23,6 +24,21 @@ const Appointment = {
         const [rows] = await pool.execute(query, [staff_id]);
         return rows;
     },
+
+    async findFutureAppointmentsByStaffId(staff_id) {
+        const query = `
+              SELECT 
+                  a.date, 
+                  a.startTime as time
+              FROM 
+                  Appointments a
+              WHERE 
+                  a.staff_id = ? AND a.date > CURRENT_DATE()
+            `;
+      
+        const [rows] = await pool.execute(query, [staff_id]);
+        return rows;
+      },
 
     // Method to update appointment status
     async executeQuery(query, params) {
