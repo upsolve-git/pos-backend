@@ -11,5 +11,6 @@ router.post('/get-customers', authenticate, authorize('admin'), AdminController.
 router.get('/view-appointments', authenticate, authorize('admin'), AdminController.getAppointmentsForDay);
 router.post('/update-appointment', authenticate, authorize('admin'), AdminController.updateAppointment);
 router.post('/get-services', authenticate, authorize('admin'), AdminController.getServices);
+router.post('/get-available-staff', authenticate, authorize('admin'), AdminController.getAvailableStaff);
 
 module.exports = router;

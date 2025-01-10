@@ -100,7 +100,23 @@ const Appointment = {
         `;
         const [rows] = await pool.execute(query, [customerId]);
         return rows;
+    },
+
+    async findBookedStaffIds(serviceId, date, startTime) {
+        const query = `
+            SELECT DISTINCT 
+                a.staff_id 
+            FROM 
+                Appointments a
+            WHERE 
+                a.service_id = ? AND 
+                a.date = ? AND 
+                a.startTime = ?
+        `;
+        const [rows] = await pool.execute(query, [serviceId, date, startTime]);
+        return rows.map(row => row.staff_id);
     }
+    
     
 };
 

@@ -52,6 +52,13 @@ const User = {
         return rows[0];
     },
 
+    async findByid(id) {
+        await this.useDatabase(); // Switch to the specified database
+        const query = `SELECT * FROM users WHERE id = ?`;
+        const [rows] = await pool.execute(query, [id]);
+        return rows[0];
+    },
+
     async getAll() {
         const query = `SELECT * FROM users`;
         const [rows] = await pool.execute(query);

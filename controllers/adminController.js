@@ -173,12 +173,35 @@ const AdminController = {
                 const staff = await Staff.getAll();
                 return res.status(200).json(staff);
             }
-            const staffbyService = await Staff.getStaffbyServiceAvailability(service_id, true)
+            const staffbyService = await Staff.findAllByServiceId(service_id)
             return res.status(200).json(staffbyService);
         } catch(error) {
             res.status(500).json({ error: 'Error fetching staff', details: error.message });
         }
     }, 
+
+    async getAvailableStaff(req, res) {
+        try {
+            const { serviceId, date, startTime } = req.query;
+    
+            // Step 1: Get all staff for the given service ID (A)
+            const allStaff = await Staff.findAllByServiceId(serviceId);
+    
+            // Step 2: Get staff IDs with booked appointments for the given service, date, and time (B)
+            const bookedStaffIds = await Appointment.findBookedStaffIds(serviceId, date, startTime);
+    
+            // Step 3: Filter out booked staff from all staff
+            const availableStaff = allStaff.filter(staff => !bookedStaffIds.includes(staff.id));
+    
+    
+            // Send the response with available staff details
+            res.status(200).json(availableStaff);
+        } catch (error) {
+            console.error("Error fetching available staff:", error);
+            res.status(500).json({ message: "Failed to fetch available staff." });
+        }
+    }
+    
  
 };
 
