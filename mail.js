@@ -3,7 +3,7 @@ const dotenv = require('dotenv')
 
 dotenv.config()  
 
-const mailtemplate = (name, link) => {
+const mailtemplate = (name, link, serviceName, appointmentDate, appointmentTime) => {
     return `
     <!DOCTYPE html>
 <html>
@@ -65,21 +65,22 @@ const mailtemplate = (name, link) => {
         </div>
         <div class="content">
             <p>Dear ${name},</p>
-            <p>We are pleased to confirm your appointment booking. Thank you for choosing our services!</p>
+            <p>We are pleased to confirm your appointment booking for the following service:</p>
+            <p><strong>Service Name:</strong> ${serviceName}</p>
+            <p><strong>Appointment Date:</strong> ${appointmentDate}</p>
+            <p><strong>Appointment Time:</strong> ${appointmentTime}</p>
+            <p>Thank you for choosing our services!</p>
             <p>To view the details of your appointment or make any changes, please log in to your account.</p>
-            <a href=${link} class="button">Log in to Your Account</a>
-        </div>
-        <div class="footer">
-            <p>If you have any questions or need further assistance, please contact us at [Support Email] or call [Support Phone].</p>
-            <p>Thank you!</p>
+            <a href="${link}" class="button">Log in to Your Account</a>
         </div>
     </div>
 </body>
 </html>
-    `; 
-} 
+    `;
+}
+
     
-const sendMail = async(email, name, link) => {
+const sendMail = async(email, name, link, serviceName, appointmentDate, appointmentTime) => {
     try {   
   
       const transporter = nodemailer.createTransport({
@@ -94,7 +95,7 @@ const sendMail = async(email, name, link) => {
         from: process.env.EMAIL,
         to: email,
         subject:"Appointment Confirmation",
-        html:mailtemplate(name, link)
+        html:mailtemplate(name, link,  serviceName, appointmentDate, appointmentTime)
       };
   
       await transporter.sendMail(mailConfigurations);

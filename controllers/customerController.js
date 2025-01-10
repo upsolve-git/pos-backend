@@ -29,7 +29,9 @@ const CustomerController = {
             // Determine status
             const status ='confirmed'
             const user  = await User.findByid(customer_id)
-            Mail.sendMail(user.email, user.first_name + user.last_name, "https://main.d29iicb8es15um.amplifyapp.com/")
+            const serviceName = await Service.getServiceName(service_id)
+            console.log(serviceName)
+            Mail.sendMail(user.email, user.first_name + user.last_name, "https://main.d29iicb8es15um.amplifyapp.com/", serviceName.name, date, startTime)
 
             // Insert new appointment
             const appointmentId = await Appointment.insert({

@@ -16,6 +16,12 @@ const Service = {
         return service;
     },
 
+    async getServiceName(service_id) {
+        const query = `SELECT name FROM Services WHERE service_id = ?`;
+        const [[service]] = await pool.execute(query, [service_id]);
+        return service;
+    },
+
     async getAll() {
         await this.useDatabase();
         const query = `SELECT * FROM Services`;
