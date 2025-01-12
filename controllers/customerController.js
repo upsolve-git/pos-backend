@@ -1,6 +1,8 @@
 const Service = require('../models/Service');
 const Appointment = require('../models/Appointment');
 const Staff = require('../models/Staff');
+const Mail = require('../mail');
+const User = require('../models/Users');
 
 const CustomerController = {
     async viewServices(req, res) {
@@ -24,13 +26,12 @@ const CustomerController = {
                 return res.status(404).json({ message: 'Service not found' });
             }
 
-            const { limitPerDay } = service;
-
-            // Count existing appointments
-            const appointmentCount = await Appointment.countAppointments(service_id, date, startTime);
-
             // Determine status
-            const status = appointmentCount < limitPerDay ? 'confirmed' : 'waitlisted';
+            const status ='confirmed'
+            const user  = await User.findByid(customer_id)
+            const serviceName = await Service.getServiceName(service_id)
+            console.log(serviceName)
+            Mail.sendMail(user.email, user.first_name + user.last_name, "https://main.d29iicb8es15um.amplifyapp.com/", serviceName.name, date, startTime)
 
             // Insert new appointment
             const appointmentId = await Appointment.insert({

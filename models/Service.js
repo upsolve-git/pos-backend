@@ -30,12 +30,18 @@ const Service = {
     return service;
   },
 
-  async getAll() {
-    await this.useDatabase();
-    const query = `SELECT * FROM Services`;
-    const [rows] = await pool.execute(query);
-    return rows;
-  },
+    async getServiceName(service_id) {
+        const query = `SELECT name FROM Services WHERE service_id = ?`;
+        const [[service]] = await pool.execute(query, [service_id]);
+        return service;
+    },
+
+    async getAll() {
+        await this.useDatabase();
+        const query = `SELECT * FROM Services`;
+        const [rows] = await pool.execute(query);
+        return rows;
+    },
 
   async useDatabase() {
     const query = `USE store_management`;
