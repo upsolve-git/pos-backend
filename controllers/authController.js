@@ -50,8 +50,8 @@ const AuthController = {
   async login(req, res) {
     try {
       const { email, password } = req.body;
- 
-      // console.log(req.body);
+
+      console.log(req.body);
 
       // Find user by email
       const user = await User.findByEmail(email);
@@ -69,10 +69,10 @@ const AuthController = {
       // Send token as a secure, HTTP-only cookie
       res.cookie("pos_token", token, {
         httpOnly: true,
-        secure: true, // Change to true if using HTTPS
+        secure: false, // Change to true if using HTTPS
         sameSite: "None",
         maxAge: 3600000,
-        path: "/", // Ensure the cookie is set for all paths
+        path: "/",
       });
 
       // Respond with user role
@@ -85,47 +85,36 @@ const AuthController = {
     }
   },
 
-  async authenticate(req, res) {
-    try {
-      // Retrieve the token from cookies
-      const token = req.cookies.pos_token;
-
-      // Check if token exists
-      if (!token) {
-        return res
-          .status(401)
-          .json({ message: "Authentication token is missing" });
-      }
-
-      // Verify the token
-      const decoded = jwt.verify(token, JWT_SECRET);
-      console.log(decoded);
-
-      // Check if the user's role is valid
-      // const validRoles = ['customer', 'staff', 'admin'];
-      // if (!validRoles.includes(decoded.role)) {
-      //     return res.status(403).json({ message: 'Unauthorized role' });
-      // }
-
-      // Respond with success and user details
-      res.json({
-        message: "Authentication successful",
-        role: decoded.role,
-        userId: decoded.id,
-      });
-    } catch (error) {
-      console.error("Error during authentication:", error);
-
-      if (error.name === "TokenExpiredError") {
-        return res
-          .status(401)
-          .json({ message: "Authentication token has expired" });
-      }
-
-      res
-        .status(500)
-        .json({ error: "Error during authentication", details: error.message });
+  authenticate(req, res, next) {
+    const token = req.cookies.pos_token; // Assuming you're using cookies for the token
+    if (!token) {
+      return res
+        .status(401)
+        .json({ message: "Authentication token is missing" });
     }
+
+    try {
+      const decoded = jwt.verify(token, JWT_SECRET);
+      req.user = decoded; // Attach decoded user data to the request object
+      next(); // Proceed to next middleware
+    } catch (error) {
+      console.error("Authentication error:", error);
+      res.status(401).json({ message: "Invalid or expired token" });
+    }
+  },
+
+  // Authorization middleware for role
+  authorize(role) {
+    return (req, res, next) => {
+      if (req.user.role !== role) {
+        return res
+          .status(403)
+          .json({
+            message: "Forbidden: You do not have the required permissions",
+          });
+      }
+      next(); // Proceed to next middleware if the user has the correct role
+    };
   },
 
   async logout(req, res) {
@@ -133,7 +122,7 @@ const AuthController = {
       // Clear the 'pos_token' cookie
       res.clearCookie("pos_token", {
         httpOnly: true,
-        secure: true, // Change to true if using HTTPS
+        secure: false, // Change to true if using HTTPS
         sameSite: "None",
         path: "/", // Ensure the cookie is set for all paths
       });

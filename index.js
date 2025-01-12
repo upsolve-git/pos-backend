@@ -6,15 +6,15 @@ const adminRoutes = require("./routes/adminRoutes");
 const staffRoutes = require("./routes/staffRoutes");
 const customerRoutes = require("./routes/customerRoutes");
 const cookieParser = require("cookie-parser");
-
-// const { pool } = require('./config/database');
-
+const { pool } = require("./config/database");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-
-
-const allowedOrigins = ['https://main.d29iicb8es15um.amplifyapp.com', 'http://localhost:3000',  "http://192.168.29.11:8081"];
+const allowedOrigins = [
+  "https://main.d29iicb8es15um.amplifyapp.com",
+  "http://localhost:3000",
+  "http://192.168.29.11:8081",
+];
 
 const corsOptions = {
   origin: function (origin, callback) {
@@ -26,6 +26,7 @@ const corsOptions = {
   },
   credentials: true,
 };
+
 
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
@@ -41,7 +42,7 @@ app.use("/api/customer", customerRoutes);
 // Start server
 (async () => {
   try {
-    // await pool(); // Initialize database connection
+    await pool// Initialize database connection
     app.listen(PORT, () => {
       console.log(`Server is running on http://localhost:${PORT}`);
     });

@@ -4,8 +4,9 @@ const Staff = require('../models/Staff');
 const StaffController = {
     async viewAppointments(req, res) {
         try {
-            const staffId = req.user.id; // Assuming authentication middleware adds `user` to `req`
-            const appointments = await Appointment.findByStaffId(staffId);
+            const staff_id = req.user.id;
+            const date = req.query.date; // Assuming authentication middleware adds `user` to `req`
+            const appointments = await Appointment.findByStaffId(staff_id, date);
             res.json(appointments);
         } catch (error) {
             res.status(500).json({ error: 'Error fetching appointments', details: error.message });
