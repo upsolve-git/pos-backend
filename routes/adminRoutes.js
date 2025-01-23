@@ -36,6 +36,12 @@ router.get(
   AuthController.authorize("admin"),
   AdminController.getAppointmentsForDay
 );
+router.get(
+  "/view-all-appointments",
+  AuthController.authenticate,
+  AuthController.authorize("admin"),
+  AdminController.getAllAppointments
+);
 router.post(
   "/update-appointment",
   AuthController.authenticate,

@@ -58,8 +58,13 @@ const Appointment = {
 
   // Method to update appointment status
   async executeQuery(query, params) {
-    const [result] = await pool.execute(query, params);
-    return result;
+    try{
+      const [result] = await pool.execute(query,params);
+      return result;
+    } catch (error) {
+      console.log(error)
+      throw error;
+    }
   },
 
   async updateStatus(appointment_id, status) {
@@ -83,6 +88,37 @@ const Appointment = {
     const [rows] = await pool.execute(query, [date]);
     return rows;
   },
+
+  async getAllAppointments() {
+    const query = `
+            SELECT a.*, CONCAT(u.first_name, ' ', u.last_name) AS customer_name, srv.name AS service_name, CONCAT(us.first_name, ' ', us.last_name) AS staff_name
+            FROM Appointments a
+            JOIN users u ON a.customer_id = u.id
+            JOIN Services srv ON a.service_id = srv.service_id
+            JOIN Staff sta oN a.staff_id = sta.staff_id
+            JOIN users us ON sta.user_id = us.id
+        `;
+    const [rows] = await pool.execute(query, []);
+    return rows;
+  },
+
+  async getsingleAppointment(appointment_id) {
+    const query = `
+    SELECT a.*, 
+           CONCAT(u.first_name, ' ', u.last_name) AS customer_name, 
+           srv.name AS service_name, 
+           CONCAT(us.first_name, ' ', us.last_name) AS staff_name
+    FROM Appointments a
+    JOIN users u ON a.customer_id = u.id
+    JOIN Services srv ON a.service_id = srv.service_id
+    JOIN Staff sta ON a.staff_id = sta.staff_id
+    JOIN users us ON sta.user_id = us.id
+    WHERE a.appointment_id = ?
+`;
+const [rows] = await pool.execute(query, [appointment_id]);
+return rows.length > 0 ? rows[0] : null;
+  },
+
 
   async getAppointmentById(appointment_id) {
     const result = await pool.query(

@@ -12,12 +12,13 @@ const PORT = process.env.PORT || 5000;
 
 const allowedOrigins = [
   "https://main.d29iicb8es15um.amplifyapp.com",
-  "http://localhost:3000",
-  "http://192.168.29.11:8081",
+  "http://localhost:",
+  "http://192.168.29.42:8081",
 ];
 
 const corsOptions = {
   origin: function (origin, callback) {
+    console.log(origin)
     if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
       callback(null, true);
     } else {

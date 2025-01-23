@@ -3,6 +3,7 @@ const Appointment = require("../models/Appointment");
 const User = require("../models/Users");
 const Staff = require("../models/Staff");
 const bcrypt = require("bcrypt");
+const { pool } = require("../config/database");
 
 const AdminController = {
   async addService(req, res) {
@@ -163,78 +164,78 @@ const AdminController = {
     }
   },
 
+  async getAllAppointments(req, res) {
+    try {
+      const appointments = await Appointment.getAllAppointments();
+
+      res.status(200).json({
+        message: "Appointments fetched successfully",
+        appointments,
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
+  },
+
   async updateAppointment(req, res) {
     try {
       // Extract the appointment_id from the query params and other fields from the request body
       const { appointment_id } = req.query;
       console.log(req.body); // Make sure to log and check the structure of the incoming body
       const { status, paymentStatus, staff_id } = req.body;
-
+  
       // Validate appointment_id
       if (!appointment_id) {
         return res.status(400).json({ message: "Appointment ID is required" });
       }
-
+  
       // Check if at least one field is provided for update
       if (!status && !paymentStatus && !staff_id) {
         return res.status(400).json({ message: "No update fields provided" });
       }
-
-      // Build dynamic update query
-      const updates = [];
-      const values = [];
-
-      // Check and add the necessary fields for updating
+  
+      let queryResults = [];
+  
+      // Execute query for updating 'status' if it's provided
       if (status) {
-        updates.push("status = ?");
-        values.push(status);
+        const statusQuery = `
+          UPDATE Appointments
+          SET status = ?
+          WHERE appointment_id = ?
+        `;
+        await pool.execute(statusQuery, [status, appointment_id]);
+        // queryResults.push(statusResult);
       }
-
+  
+      // Execute query for updating 'paymentStatus' if it's provided
       if (paymentStatus) {
-        updates.push("paymentStatus = ?");
-        values.push(paymentStatus);
+        const paymentStatusQuery = `
+          UPDATE Appointments
+          SET paymentStatus = ?
+          WHERE appointment_id = ?
+        `;
+        await pool.execute(paymentStatusQuery, [paymentStatus, appointment_id]);
       }
-
+  
+      // Execute query for updating 'staff_id' if it's provided
       if (staff_id) {
-        updates.push("staff_id = ?");
-        values.push(staff_id);
+        const staffQuery = `
+          UPDATE Appointments
+          SET staff_id = ?
+          WHERE appointment_id = ?
+        `;
+        await pool.execute(staffQuery, [staff_id, appointment_id]);
       }
 
-      // Always add the appointment_id for the WHERE clause
-      values.push(appointment_id);
-
-      // If no updates were made, return an error
-      if (updates.length === 0) {
-        return res.status(400).json({ message: "No valid fields to update" });
-      }
-
-      // Construct the query
-      const query = `
-        UPDATE Appointments
-        SET ${updates.join(", ")}
-        WHERE appointment_id = ?
-      `;
-
-      // Execute the query
-      const [result] = await Appointment.executeQuery(query, values);
-
-      // Check if any rows were affected
-      if (result.affectedRows > 0) {
-        // If staff_id was updated, mark the staff's availability as false
-        if (staff_id) {
-          await Staff.updateAvailability(staff_id, false);
-        }
-        return res
-          .status(200)
-          .json({ message: "Appointment updated successfully" });
-      } else {
-        return res.status(404).json({ message: "Appointment not found" });
-      }
+      
+      return res.status(200).json({ message: "Appointment updated successfully" });
     } catch (error) {
       console.error(error);
       return res.status(500).json({ message: "Internal Server Error" });
     }
   },
+  
 
   async getServices(req, res) {
     try {
