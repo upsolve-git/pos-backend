@@ -34,6 +34,7 @@ USE store_management;
 -- );
 -- CREATE TABLE Staff (
 --     staff_id INT AUTO_INCREMENT PRIMARY KEY,
+--     salon_id INT NOT NULL,
 --     user_id INT NOT NULL,
 --     hourlyWage DECIMAL(10, 2) NOT NULL,
 --     service_id INT NOT NULL,
@@ -46,6 +47,7 @@ USE store_management;
 
 -- CREATE TABLE Services (
 --     service_id INT AUTO_INCREMENT PRIMARY KEY,
+--     salon_id INT NOT NULL,
 --     name VARCHAR(100) NOT NULL,
 --     description TEXT,
 --     duration INT NOT NULL, -- Duration in minutes

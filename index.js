@@ -9,10 +9,11 @@ const cookieParser = require("cookie-parser");
 const { pool } = require("./config/database");
 const app = express();
 const PORT = process.env.PORT || 5000;
+const bcrypt = require("bcrypt");
 
 const allowedOrigins = [
   "https://main.d29iicb8es15um.amplifyapp.com",
-  "http://localhost:",
+  "http://localhost:3000",
   "http://192.168.29.42:8081",
 ];
 
@@ -44,7 +45,8 @@ app.use("/api/customer", customerRoutes);
 (async () => {
   try {
     await pool// Initialize database connection
-    app.listen(PORT, () => {
+    app.listen(PORT, async() => {
+      console.log(await bcrypt.hash("Staff@123", 10));
       console.log(`Server is running on http://localhost:${PORT}`);
     });
   } catch (error) {
