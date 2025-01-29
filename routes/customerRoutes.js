@@ -11,4 +11,5 @@ router.post('/cancel-appointment', CustomerController.cancelAppointment);
 router.get('/appointments/customer/:customer_id', CustomerController.getAppointmentsByCustomerId);
 router.get('/available-staff', CustomerController.getAvailableStaff);
 router.get('/booked-appointments', CustomerController.getFutureAppointments);
+router.get('/userProfile', CustomerController.getUserProfile);
 module.exports = router;

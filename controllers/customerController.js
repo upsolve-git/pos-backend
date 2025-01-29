@@ -125,9 +125,20 @@ const CustomerController = {
           console.error("Error fetching future appointments:", error);
           res.status(500).json({ message: "Failed to fetch future appointments." });
         }
+    },
+
+    async getUserProfile(req, res) {
+        const { userId } = req.query;
+        console.log(userId)
+        try{
+            const userDetails = await User.findByid(userId);
+
+            res.status(200).json(userDetails);
+        } catch (error){
+            console.log(error)
+            res.status(500).json({ message: "Failed to fetch user details." });
+        }
     }
-
-
 
 };
 
