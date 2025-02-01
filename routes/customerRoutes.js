@@ -12,4 +12,5 @@ router.get('/appointments/customer/:customer_id', CustomerController.getAppointm
 router.get('/available-staff', CustomerController.getAvailableStaff);
 router.get('/booked-appointments', CustomerController.getFutureAppointments);
 router.get('/userProfile', CustomerController.getUserProfile);
+router.post('/editProfile', CustomerController.updateProfileDetails)
 module.exports = router;
