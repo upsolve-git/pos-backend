@@ -14,6 +14,7 @@ const bcrypt = require("bcrypt");
 const allowedOrigins = [
   "https://main.d29iicb8es15um.amplifyapp.com",
   "http://localhost:3000",
+  "http://192.168.29.48:8081",
   "http://192.168.29.42:8081",
 ];
 

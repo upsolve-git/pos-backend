@@ -66,5 +66,14 @@ router.get(
   AuthController.authorize("admin"),
   AdminController.getAvailableStaff
 );
-
+router.post(
+  "/add-salon",
+  AdminController.addSalon
+);
+router.get(
+  "/get-all-salons",
+  AuthController.authenticate,
+  AuthController.authorize("admin"),
+  AdminController.getAllSalons
+);
 module.exports = router;

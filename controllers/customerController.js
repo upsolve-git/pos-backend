@@ -3,12 +3,57 @@ const Appointment = require('../models/Appointment');
 const Staff = require('../models/Staff');
 const Mail = require('../mail');
 const User = require('../models/Users');
+const Salon = require('../models/Salon');
+const Wallet = require('../models/Wallet');
 
 const CustomerController = {
     async viewServices(req, res) {
         console.log("here");
         try {
             const services = await Service.getAll();
+            res.json(services);
+        } catch (error) {
+            res.status(500).json({ error: 'Error fetching services', details: error.message });
+        }
+    },
+
+    async getSalons(req, res) {
+        try {
+           
+            const salons = await Salon.getAll();
+            console.log(salons)
+            res.json(salons);
+        } catch (error) {
+            res.status(500).json({ error: 'Error fetching salons', details: error.message });
+        }
+    },
+
+    async getWallet(req, res) {
+        try {
+            const {user_id} = req.params
+            const wallet = await Wallet.getById(user_id);
+            res.json(wallet);
+        } catch (error) {
+            res.status(500).json({ error: 'Error fetching wallet', details: error.message });
+        }
+    },
+
+    async updateWallet(req, res) {
+        try {
+            console.log(req.body)
+            const {user_id, credits} = req.body
+            const wallet = await Wallet.updateById(user_id, credits);
+            res.json(wallet);
+        } catch (error) {
+            res.status(500).json({ error: 'Error fetching wallet', details: error.message });
+        }
+    },
+
+    async viewServicesBySalonId(req, res) {
+        try {
+            console.log(req.params)
+            const {salon_id} = req.params 
+            const services = await Service.getAllBySalonId(salon_id);
             res.json(services);
         } catch (error) {
             res.status(500).json({ error: 'Error fetching services', details: error.message });
@@ -103,9 +148,9 @@ const CustomerController = {
 
     async getAvailableStaff(req, res) {
         // console.log(req)
-        const { serviceId } = req.query;
+        const { serviceId, salonId } = req.query;
         try {
-          const staffList = await Staff.findAllByServiceId(serviceId);
+          const staffList = await Staff.findAllByServiceId(serviceId, salonId);
       
           res.status(200).json(staffList);
         } catch (error) {

@@ -27,25 +27,25 @@ const Staff = {
 
   async getAll() {
     const query = `
-          SELECT 
-              s.*, 
-              CONCAT(u.first_name, ' ', u.last_name) AS name,
-              u.phone_number, u.email,
+      SELECT 
+        s.*, 
+        CONCAT(u.first_name, ' ', u.last_name) AS name,
+        u.phone_number, u.email,
               u.id as id,
-              serv.name as service_name
-          FROM 
-              Staff s 
-          JOIN 
-              users u ON s.user_id = u.id
-          JOIN 
+        serv.name as service_name
+      FROM 
+        Staff s
+      JOIN 
+        users u ON s.user_id = u.id
+      JOIN 
               Services serv on s.service_id = serv.service_id;
-        `;
-
+    `;
+  
     const [rows] = await pool.execute(query);
     return rows;
   },
 
-  async findAllByServiceId(service_id) {
+  async findAllByServiceId(service_id, salon_id) {
     const query = `
           SELECT 
               s.staff_id , 
@@ -55,10 +55,10 @@ const Staff = {
           JOIN 
               users u ON s.user_id = u.id
           WHERE 
-              s.service_id = ? AND s.available = true;
+              s.service_id = ? AND s.available = true AND s.salon_id = ?;
         `;
 
-    const [rows] = await pool.execute(query, [service_id]);
+    const [rows] = await pool.execute(query, [service_id, salon_id]);
     return rows;
   },
 };

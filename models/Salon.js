@@ -1,4 +1,4 @@
-const { pool } = require("../config/database");
+const pool  = require("../config/database");
 
 
 const Salon = {
@@ -16,7 +16,9 @@ const Salon = {
       INSERT INTO Salons (salon_name, owner_name, contact_email, contact_mobile, bank_account, number_of_systems, price_per_system, password)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `;
+    await this.useDatabase();
     try {
+      
       const [result] = await pool.execute(query, [
         salon_name,
         owner_name,
@@ -37,18 +39,21 @@ const Salon = {
   },
 
   async getById(salonId) {
+    await this.useDatabase();
     const query = `SELECT * FROM Salons WHERE id = ?`;
     const [[salon]] = await pool.execute(query, [salonId]);
     return salon; // Return salon details
   },
 
   async getAll() {
+    await this.useDatabase();
     const query = `SELECT * FROM Salons`;
     const [salons] = await pool.execute(query);
     return salons; // Return all salons
   },
 
   async update(salonId, updateFields) {
+    await this.useDatabase();
     const fields = Object.keys(updateFields)
       .map((field) => `${field} = ?`)
       .join(", ");
@@ -57,6 +62,10 @@ const Salon = {
     const query = `UPDATE Salons SET ${fields}, updated_at = NOW() WHERE id = ?`;
     const [result] = await pool.execute(query, values);
     return result.affectedRows; // Return number of affected rows
+  },
+  async useDatabase() {
+    const query = `USE store_management`;
+    await pool.query(query);
   },
 };
 

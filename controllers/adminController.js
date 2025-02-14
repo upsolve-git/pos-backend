@@ -2,6 +2,7 @@ const Service = require("../models/Service");
 const Appointment = require("../models/Appointment");
 const User = require("../models/Users");
 const Staff = require("../models/Staff");
+const Salon = require("../models/Salon");
 const bcrypt = require("bcrypt");
 const { pool } = require("../config/database");
 
@@ -235,7 +236,6 @@ const AdminController = {
       return res.status(500).json({ message: "Internal Server Error" });
     }
   },
-  
 
   async getServices(req, res) {
     try {
@@ -298,6 +298,82 @@ const AdminController = {
       res.status(500).json({ message: "Failed to fetch available staff." });
     }
   },
+
+  async addSalon(req, res) {
+    try {
+      console.log("here in request salon ",req.body)
+      const {
+        salon_name,
+        owner_name,
+        contact_email,
+        contact_mobile,
+        bank_account,
+        number_of_systems = 0,
+        price_per_system = 0.00,
+        password,
+      } = req.body.salon;
+
+      // Validate required fields
+      if (
+        !salon_name ||
+        !owner_name ||
+        !contact_email ||
+        !contact_mobile ||
+        !bank_account ||
+        !password
+      ) {
+        return res
+          .status(400)
+          .json({ error: "Missing required fields for adding a salon." });
+      }
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      // Use the model to add the salon
+      const salonId = await Salon.create({
+        salon_name,
+        owner_name,
+        contact_email,
+        contact_mobile,
+        bank_account,
+        number_of_systems,
+        price_per_system,
+        password,
+      });
+
+      res.status(201).json({
+        message: "Salon added successfully",
+        salonId,
+      });
+    } catch (error) {
+      console.error("Error adding salon:", error);
+      res
+        .status(500)
+        .json({ error: "Error adding salon", details: error.message });
+    }
+  },
+
+  async getAllSalons(req, res) {
+    try {
+      // Fetch all salons using the model
+      const salons = await Salon.getAll();
+
+      if (salons.length === 0) {
+        return res.status(404).json({ message: "No salons found." });
+      }
+
+      res.status(200).json({
+        message: "Salons fetched successfully",
+        salons,
+      });
+    } catch (error) {
+      console.error("Error fetching salons:", error);
+      res.status(500).json({
+        error: "Error fetching salons",
+        details: error.message,
+      });
+    }
+  },
+
 };
 
 module.exports = AdminController;

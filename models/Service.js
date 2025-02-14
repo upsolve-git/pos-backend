@@ -42,6 +42,13 @@ const Service = {
         const [rows] = await pool.execute(query);
         return rows;
     },
+    
+    async getAllBySalonId(salon_id) {
+      await this.useDatabase();
+      const query = `SELECT * FROM Services WHERE salon_id = ?`;
+      const [rows] = await pool.execute(query, [salon_id]);
+      return rows;
+  },
 
   async useDatabase() {
     const query = `USE store_management`;
