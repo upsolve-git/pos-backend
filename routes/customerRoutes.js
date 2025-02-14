@@ -18,5 +18,5 @@ router.get('/services/:salon_id', CustomerController.viewServicesBySalonId);
 router.get('/get-wallet/:user_id', CustomerController.getWallet);
 router.post('/update-wallet', CustomerController.updateWallet);
 router.get("/get-all-salons",AdminController.getAllSalons);
-
+router.post('/editProfile', CustomerController.updateProfileDetails)
 module.exports = router;

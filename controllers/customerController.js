@@ -183,8 +183,32 @@ const CustomerController = {
             console.log(error)
             res.status(500).json({ message: "Failed to fetch user details." });
         }
-    }
+    },
 
+    async updateProfileDetails(req, res) {
+        try {
+            const { user_id, first_name, last_name, phone_number, dob } = req.body; // Get data from request body
+    
+            // Validate required fields
+            if (!user_id || !first_name || !last_name || !phone_number) {
+                return res.status(400).json({ message: "Missing required fields" });
+            }
+    
+            // Call the update function from User model
+            const result = await User.updateUserDetails(first_name, last_name, phone_number, dob, user_id);
+    
+            // Check if any rows were updated
+            if (result.affectedRows === 0) {
+                return res.status(404).json({ message: "User not found or no changes made" });
+            }
+    
+            res.status(200).json({ message: "Profile updated successfully" });
+        } catch (error) {
+            console.error("Error updating profile:", error);
+            res.status(500).json({ message: "Failed to update user details" });
+        }
+    }
+    
 };
 
 module.exports = CustomerController;

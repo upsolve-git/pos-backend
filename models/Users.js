@@ -76,6 +76,20 @@ const User = {
     return rows;
   },
 
+  async updateUserDetails(first_name, last_name, phone_number, dob, user_id){
+    const query = ` UPDATE users
+    SET first_name = ?,
+      last_name = ?,
+      phone_number = ?,
+      dob = ?
+    WHERE user_id = ?
+    `
+
+    let [res] = await pool.execute(query, [first_name, last_name, phone_number, dob, user_id])
+
+    return [res]
+  },
+
   // Switch the database dynamically
   async useDatabase() {
     const query = `USE store_management`;
