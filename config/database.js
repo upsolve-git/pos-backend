@@ -8,7 +8,9 @@ const pool = mysql.createPool({
     database: 'store_management', // Ensure you're connecting to the correct database
     waitForConnections: true,
     connectionLimit: 10,
-    queueLimit: 0
+    queueLimit: 0,
+    keepAliveInitialDelay: 300000, // 5 minutes
+    enableKeepAlive: true
 });
 
 module.exports = pool;

@@ -11,10 +11,11 @@ const Salon = {
     number_of_systems,
     price_per_system,
     password,
+    referal_mail
   }) {
     const query = `
-      INSERT INTO Salons (salon_name, owner_name, contact_email, contact_mobile, bank_account, number_of_systems, price_per_system, password)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO Salons (salon_name, owner_name, contact_email, contact_mobile, bank_account, number_of_systems, price_per_system, password, referal_mail)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
     await this.useDatabase();
     try {
@@ -28,6 +29,7 @@ const Salon = {
         number_of_systems,
         price_per_system,
         password,
+        referal_mail
       ]);
 
       // result.insertId will give you the ID of the newly inserted record

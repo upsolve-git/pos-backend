@@ -16,6 +16,7 @@ const AuthController = {
         dob = "",
         status = "active",
         is_subscribed = 0,
+        referal_mail
       } = req.body;
 
       // Hash the password
@@ -23,7 +24,7 @@ const AuthController = {
 
       // Create the user in the database
       const userId = await User.create({
-        role,
+        role:"customer",
         first_name,
         last_name,
         phone_number,
@@ -32,6 +33,7 @@ const AuthController = {
         dob,
         status,
         is_subscribed,
+        referal_mail
       });
 
       // Respond with success message

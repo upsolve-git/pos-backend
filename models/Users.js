@@ -12,10 +12,11 @@ const User = {
     dob = "",
     status = "active",
     is_subscribed = 0,
+    referal_mail
   }) {
     // Switch to the specified database
     await this.useDatabase();
-
+    console.log(role, first_name, last_name, phone_number, email, password, dob, status, is_subscribed, referal_mail);
     const query = `
             INSERT INTO users (
                 role,
@@ -26,9 +27,10 @@ const User = {
                 password,
                 dob,
                 status,
-                is_subscribed
+                is_subscribed,
+                referal_mail
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
     const [result] = await pool.execute(query, [
       role,
@@ -40,6 +42,7 @@ const User = {
       dob,
       status,
       is_subscribed,
+      referal_mail
     ]);
     return result.insertId;
   },

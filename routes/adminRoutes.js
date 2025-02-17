@@ -76,4 +76,8 @@ router.get(
   AuthController.authorize("admin"),
   AdminController.getAllSalons
 );
+router.post(
+  "/add-agent",
+  AdminController.addAgent
+);
 module.exports = router;

@@ -3,6 +3,7 @@ const Appointment = require("../models/Appointment");
 const User = require("../models/Users");
 const Staff = require("../models/Staff");
 const Salon = require("../models/Salon");
+const SaleAgent = require("../models/SaleAgent");
 const bcrypt = require("bcrypt");
 const { pool } = require("../config/database");
 
@@ -47,6 +48,7 @@ const AdminController = {
         dob = "",
         status = "active",
         is_subscribed = 0,
+        referal_mail
       } = req.body.user;
 
       console.log(req.body);
@@ -72,6 +74,7 @@ const AdminController = {
         dob,
         status,
         is_subscribed,
+        referal_mail
       });
 
       res.status(201).json({
@@ -100,6 +103,7 @@ const AdminController = {
         is_subscribed = 0,
         hourlyWage,
         service_id,
+        referal_mail
       } = req.body.user;
 
       console.log(req.body);
@@ -125,6 +129,7 @@ const AdminController = {
         dob,
         status,
         is_subscribed,
+        referal_mail
       });
 
       // Create staff entry linked to the user
@@ -311,6 +316,7 @@ const AdminController = {
         number_of_systems = 0,
         price_per_system = 0.00,
         password,
+        referal_mail
       } = req.body.salon;
 
       // Validate required fields
@@ -338,6 +344,7 @@ const AdminController = {
         number_of_systems,
         price_per_system,
         password,
+        referal_mail
       });
 
       res.status(201).json({
@@ -371,6 +378,60 @@ const AdminController = {
         error: "Error fetching salons",
         details: error.message,
       });
+    }
+  },
+
+  async addAgent(req, res) {
+    try {
+      const {
+        first_name,
+        last_name,
+        phone_number,
+        email,
+        password,
+        dob = "",
+        status = "active",
+        is_subscribed = 0,
+        referal_mail="",
+        commision
+      } = req.body.agent;
+
+      console.log(req.body);
+
+
+      // Hash the password
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      // Create user entry
+      const user_id = await User.create({
+        role:"sale_agent",
+        first_name,
+        last_name,
+        phone_number,
+        email,
+        password: hashedPassword,
+        dob,
+        status,
+        is_subscribed,
+        referal_mail
+      });
+
+      // Create staff entry linked to the user
+      const agent_id = await SaleAgent.create({
+        user_id: user_id,
+        commision
+      });
+
+      res.status(201).json({
+        message: "Agent registered successfully",
+        user_id,
+        agent_id,
+      });
+    } catch (error) {
+      console.error(error);
+      res
+        .status(500)
+        .json({ error: "Error registering staff", details: error.message });
     }
   },
 
