@@ -72,8 +72,6 @@ router.post(
 );
 router.get(
   "/get-all-salons",
-  AuthController.authenticate,
-  AuthController.authorize("admin"),
   AdminController.getAllSalons
 );
 router.post(
