@@ -16,7 +16,8 @@ const allowedOrigins = [
   "http://localhost:3000",
   "http://192.168.29.48:8081",
   "http://192.168.29.42:8081",
-  "https://www.canadiangelnails.com"
+  "https://www.canadiangelnails.com",
+  "http://localhost:3001"
 ];
 
 const corsOptions = {

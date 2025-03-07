@@ -5,7 +5,10 @@ const Staff = require("../models/Staff");
 const Salon = require("../models/Salon");
 const SaleAgent = require("../models/SaleAgent");
 const bcrypt = require("bcrypt");
+const axios = require("axios");
 const { pool } = require("../config/database");
+const backendURL = 'http://localhost:8000';
+// const backendURL = 'https://api.canadiangelnails.com';
 
 const AdminController = {
   async addService(req, res) {
@@ -346,7 +349,19 @@ const AdminController = {
         password,
         referal_mail
       });
-
+       // Call another backend API with contact_email and hashedPassword
+      const externalApiResponse = await axios.post(backendURL +"/signup", {
+        email: contact_email,
+        password: password,
+        firstName: owner_name,
+        lastName: "",
+        phone:contact_mobile,
+        accType: "Business",
+        countryCode:"+1"
+      });
+      if (externalApiResponse.status !== 201) {
+        return res.status(500).json({ error: "Failed to register with external API." });
+      }
       res.status(201).json({
         message: "Salon added successfully",
         salonId,
