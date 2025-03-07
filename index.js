@@ -16,6 +16,7 @@ const allowedOrigins = [
   "http://localhost:3000",
   "http://192.168.29.48:8081",
   "http://192.168.29.42:8081",
+  "https://www.canadiangelnails.com/"
 ];
 
 const corsOptions = {
@@ -47,7 +48,7 @@ app.use("/api/customer", customerRoutes);
   try {
     await pool// Initialize database connection
     app.listen(PORT, async() => {
-      console.log(await bcrypt.hash("Staff@123", 10));
+      console.log(await bcrypt.hash("Test@123", 10));
       console.log(`Server is running on http://localhost:${PORT}`);
     });
   } catch (error) {
