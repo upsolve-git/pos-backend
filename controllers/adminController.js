@@ -7,8 +7,8 @@ const SaleAgent = require("../models/SaleAgent");
 const bcrypt = require("bcrypt");
 const axios = require("axios");
 const { pool } = require("../config/database");
-const backendURL = 'http://localhost:8000';
-// const backendURL = 'https://api.canadiangelnails.com';
+// const backendURL = 'http://localhost:8000';
+const backendURL = 'https://api.canadiangelnails.com';
 
 const AdminController = {
   async addService(req, res) {
