@@ -19,4 +19,7 @@ router.get('/get-wallet/:user_id', CustomerController.getWallet);
 router.post('/update-wallet', CustomerController.updateWallet);
 router.get("/get-all-salons",AdminController.getAllSalons);
 router.post('/editProfile', CustomerController.updateProfileDetails)
+router.post('/add-to-cart', CustomerController.addToCart);
+router.post('/delete-from-cart', CustomerController.deleteFromCart);
+router.get('/get-cart/:customer_id', CustomerController.getCartByCustomerId);
 module.exports = router;

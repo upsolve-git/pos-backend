@@ -1,5 +1,6 @@
 const Service = require('../models/Service');
 const Appointment = require('../models/Appointment');
+const Cart = require('../models/Cart');
 const Staff = require('../models/Staff');
 const Mail = require('../mail');
 const User = require('../models/Users');
@@ -62,44 +63,71 @@ const CustomerController = {
 
     async bookAppointment(req, res) {
         try {
-            console.log(req.body);
-            const { customer_id, service_id, date, startTime, staff_id} = req.body;
-
-            // Fetch service details
-            const service = await Service.getServiceDetails(service_id);
-            if (!service) {
-                return res.status(404).json({ message: 'Service not found' });
+            const { customer_id } = req.body;
+    
+            // Fetch user details
+            const user = await User.findByid(customer_id);
+            if (!user) {
+                return res.status(404).json({ message: 'User not found' });
             }
-
-            // Determine status
-            const status ='confirmed'
-            const user  = await User.findByid(customer_id)
-            const serviceName = await Service.getServiceName(service_id)
-            console.log(serviceName)
-            Mail.sendMail(user.email, user.first_name + user.last_name, "https://main.d29iicb8es15um.amplifyapp.com/", serviceName.name, date, startTime)
-
-            // Insert new appointment
-            const appointmentId = await Appointment.insert({
-                customer_id,
-                service_id,
-                date,
-                startTime,
-                status,
-                paymentStatus: 'pending',
-                staff_id
-            });
-
+    
+            // Fetch cart items for the customer
+            const cartItems = await Cart.getItemsByCustomerId(customer_id);
+            if (!cartItems || cartItems.length === 0) {
+                return res.status(400).json({ message: 'Cart is empty' });
+            }
+    
+            const createdAppointments = [];
+    
+            for (const item of cartItems) {
+                const { service_id, date, startTime, staff_id } = item;
+    
+                const service = await Service.getServiceDetails(service_id);
+                if (!service) {
+                    console.warn(`Service not found for ID: ${service_id}, skipping`);
+                    continue;
+                }
+    
+                const status = 'confirmed';
+                const serviceName = await Service.getServiceName(service_id);
+    
+                // Send email
+                await Mail.sendMail(
+                    user.email,
+                    user.first_name + " " + user.last_name,
+                    "https://main.d29iicb8es15um.amplifyapp.com/",
+                    serviceName.name,
+                    date,
+                    startTime
+                );
+    
+                // Insert appointment
+                const appointmentId = await Appointment.insert({
+                    customer_id,
+                    service_id,
+                    date,
+                    startTime,
+                    status,
+                    paymentStatus: 'pending',
+                    staff_id
+                });
+    
+                createdAppointments.push({ appointmentId, service_id, date, startTime });
+            }
+    
+            // Clear cart after booking
+            await Cart.clearCustomerCart({customer_id});
+    
             res.status(201).json({
-                message: 'Appointment created successfully',
-                appointmentId,
-                status
+                message: 'Appointments created successfully',
+                appointments: createdAppointments
             });
         } catch (error) {
             console.error(error);
             res.status(500).json({ message: 'Internal Server Error' });
         }
     },
-
+    
     async cancelAppointment(req, res) {
         try {
             const { appointment_id } = req.body;
@@ -207,7 +235,73 @@ const CustomerController = {
             console.error("Error updating profile:", error);
             res.status(500).json({ message: "Failed to update user details" });
         }
-    }
+    },
+
+    async addToCart(req, res) {
+        try {
+            console.log(req.body);
+            const { customer_id, service_id, date, startTime, staff_id} = req.body;
+
+            // Fetch service details
+            const service = await Service.getServiceDetails(service_id);
+            if (!service) {
+                return res.status(404).json({ message: 'Service not found' });
+            }
+
+            // Insert into cart
+             await Cart.insert({
+                customer_id,
+                service_id,
+                date,
+                startTime,
+                staff_id
+            });
+
+            res.status(201).json({
+                message: ' Successfully addedd to cart'
+            });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    },
+
+    async deleteFromCart(req, res) {
+        try {
+          
+            const {cart_id} = req.body;
+
+             await Cart.delete({
+                cart_id
+            });
+
+            res.status(201).json({
+                message: ' Successfully deleted from cart'
+            });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    },
+
+    async getCartByCustomerId(req, res) {
+        try {
+            const { customer_id } = req.params;
+    
+            // Fetch cart by customer ID
+            const cart = await Cart.getCartByCustomerId(customer_id);
+            
+            if (!cart || cart.length === 0) {
+                return res.status(404).json({ message: 'No items found for this customer.' });
+            }
+
+            res.status(200).json(cart);
+        } catch (error) {
+            console.error('Error fetching cart:', error);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    },
+
     
 };
 
